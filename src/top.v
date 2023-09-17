@@ -24,6 +24,7 @@ module tt_um_ja1tye_sound_generator #( parameter MAX_COUNT = 24'd10_000_000 ) (
     assign uo_out = acc[23:16];
     // use bidirectionals as inputs
     assign uio_oe = 8'b00000000;
+    assign uio_out = 8'b00000000;
 
     always @(posedge clk) begin
         if (reset) begin
