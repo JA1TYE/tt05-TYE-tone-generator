@@ -99,7 +99,7 @@ module sample_counter (
                     volume[addr_in[1:0]] <= data_in[7:0];
                 end
                 else if(addr_in[3:2] == 2'h2)begin
-                    wave_type <= data_in[2:0];
+                    wave_type <= data_in[1:0];
                 end
             end
         end

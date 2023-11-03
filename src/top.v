@@ -16,8 +16,7 @@ module tt_um_ja1tye_sound_generator (
 
     // use bidirectionals as inputs
     assign uio_oe = 8'b00000000;
-    assign uio_out[7:4] = 4'h0;
-    assign uio_out[2:0] = 3'h0;
+    assign uio_out[7:0] = 8'h0;
     assign uo_out[7:3] = 5'h0;
 
     wire i2s_bclk_out;
