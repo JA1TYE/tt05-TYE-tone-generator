@@ -7,8 +7,7 @@ module tone_engine
     output         wire i2s_d_out,
     input   wire       spi_cs_in,
     input   wire       spi_mosi_in,
-    input   wire       spi_sclk_in,
-    output  wire       spi_miso_out
+    input   wire       spi_sclk_in
 );
 
     wire[9:0] master_count;
@@ -22,8 +21,7 @@ module tone_engine
     wire slave_transaction_valid_out;
     spi_slave SPI_SLAVE(
             .reset_in(reset_in),.clk_in(clk_in),
-            .spi_sclk_in(spi_sclk_in),.spi_cs_in(spi_cs_in),.spi_mosi_in(spi_mosi_in),.spi_miso_out(spi_miso_out),
-            .data_in(8'haa),.data_valid_in(1'b0),
+            .spi_sclk_in(spi_sclk_in),.spi_cs_in(spi_cs_in),.spi_mosi_in(spi_mosi_in),
             .data_out(slave_data_out),.data_valid_out(slave_data_valid_out),
             .transaction_valid_out(slave_transaction_valid_out)
     );

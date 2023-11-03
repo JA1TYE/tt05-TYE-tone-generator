@@ -15,7 +15,7 @@ module tt_um_ja1tye_sound_generator (
     assign reset = ~rst_n;
 
     // use bidirectionals as inputs
-    assign uio_oe = 8'b00001000;
+    assign uio_oe = 8'b00000000;
     assign uio_out[7:4] = 4'h0;
     assign uio_out[2:0] = 3'h0;
     assign uo_out[7:3] = 5'h0;
@@ -25,7 +25,6 @@ module tt_um_ja1tye_sound_generator (
     wire i2s_d_out;
     wire spi_cs_in;
     wire spi_mosi_in;
-    wire spi_miso_out;
     wire spi_sclk_in;
 
     assign uo_out[0] = i2s_bclk_out;
@@ -35,13 +34,12 @@ module tt_um_ja1tye_sound_generator (
     assign spi_cs_in = uio_in[0];
     assign spi_mosi_in = uio_in[1];
     assign spi_sclk_in = uio_in[2];
-    assign uio_out[3] = spi_miso_out;
 
     //Instantiate tone engine
     tone_engine tg(
         .clk_in(clk),.reset_in(reset),
         .i2s_bclk_out(i2s_bclk_out),.i2s_ws_out(i2s_ws_out),.i2s_d_out(i2s_d_out),
-        .spi_cs_in(spi_cs_in),.spi_mosi_in(spi_mosi_in),.spi_miso_out(spi_miso_out),.spi_sclk_in(spi_sclk_in)
+        .spi_cs_in(spi_cs_in),.spi_mosi_in(spi_mosi_in),.spi_sclk_in(spi_sclk_in)
         );
 
 
