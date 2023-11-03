@@ -40,15 +40,6 @@ module sample_counter (
             sat_flag <= 1'b0;
             mix_result <= 16'h0;
 
-            phase_acc[0] <= 16'h0;
-            phase_acc[1] <= 16'h0;
-            phase_acc[2] <= 16'h0;
-            phase_acc[3] <= 16'h0;
-
-            phase_incr[0] <= 16'h0;
-            phase_incr[1] <= 16'h0;
-            phase_incr[2] <= 16'h0;
-            phase_incr[3] <= 16'h0;
         end
         else begin
             //Quick and Dirty...
