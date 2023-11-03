@@ -67,11 +67,11 @@ module sample_counter (
             if(master_count_in[9:2] == 8'h00)begin
                 phase_acc[master_count_in[1:0]] <= adder_out;
             end
-            if(master_count_in[9:2] == 8'h01)begin
+            else if(master_count_in[9:2] == 8'h01)begin
                 sqr_buf[master_count_in[1:0]] <= sqr_out;
             end
             //Mix each channels
-            if(master_count_in[9:2] == 8'h02)begin
+            else if(master_count_in[9:2] == 8'h02)begin
                 mix_result <= adder_out;
             end
             else begin
