@@ -31,9 +31,9 @@ module tt_um_ja1tye_sound_generator (
     assign uo_out[1] = i2s_ws_out;
     assign uo_out[2] = i2s_d_out;
     
-    assign uio_in[0] = spi_cs_in;
-    assign uio_in[1] = spi_mosi_in;
-    assign uio_in[2] = spi_sclk_in;
+    assign spi_cs_in = uio_in[0];
+    assign spi_mosi_in = uio_in[1];
+    assign spi_sclk_in = uio_in[2];
     assign uio_out[3] = spi_miso_out;
 
     //Instantiate tone engine
