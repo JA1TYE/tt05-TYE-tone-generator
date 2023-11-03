@@ -108,7 +108,6 @@ module sample_counter (
     function [15:0]dca;
         input   value_in;
         input   [7:0] volume_in;
-        reg     [15:0]ext_volume;
 
         dca = (value_in == 1'b1)?{1'b0,volume_in,volume_in[7:1]}:(~{1'b0,volume_in,volume_in[7:1]});
         
