@@ -38,15 +38,13 @@ module sample_counter (
     wire [15:0] b_in;
     assign b_in = (master_count_in[3:2] == 2'b00)?acc_out:mix_result;
 
-    reg sat_flag;
     wire [15:0]adder_out;
 
-    sat_adder adder(.a_in(a_in),.b_in(b_in),.s_out(adder_out),.sat_en_in(sat_flag));
+    sat_adder adder(.a_in(a_in),.b_in(b_in),.s_out(adder_out));
 
     always@(posedge clk_in)begin
         if(reset_in == 1'b1)begin
             data_valid_out <= 1'b0;
-            sat_flag <= 1'b0;
             mix_result <= 16'h0;
             
             /*
@@ -76,15 +74,11 @@ module sample_counter (
             if(master_count_in[9:2] == 8'h02)begin
                 mix_result <= adder_out;
             end
-
-            //initialize mix_result and set sat_flag
-            if(master_count_in == 10'h3)begin
-                sat_flag <= 1'b1;
+            else begin
                 mix_result <= 16'h0;
             end
 
             if(master_count_in == 10'hb)begin
-                sat_flag<= 1'b0;
                 data_valid_out <= 1'b1;
             end
             else begin
@@ -161,39 +155,10 @@ endmodule
 module sat_adder(
     input   wire[15:0]  a_in,
     input   wire[15:0]  b_in,
-    output  wire[15:0]  s_out,
-    input   wire        sat_en_in
+    output  wire[15:0]  s_out
 );
-    wire [15:0] result;
-    wire signed_ovf;
     
-    assign result = a_in + b_in;
-    assign signed_ovf = (a_in[15] == b_in[15]) && (a_in[15] != result[15]);
-    assign s_out = saturate(result,sat_en_in,signed_ovf); 
-    
-    function [15:0]saturate;
-        input [15:0] value_in;
-        input sat_en;
-        input ovf;
-
-        if(sat_en == 1'b1)begin
-            if(ovf == 1'b1)begin
-                if(value_in[15] == 1'b1)begin
-                    //If overflow is detected and result[15] is 1, then saturate to 0x7fff
-                    saturate = 16'h7fff;
-                end
-                else begin
-                    saturate = 16'h8000;
-                end
-            end
-            else begin
-                saturate = value_in;
-            end
-        end
-        else begin
-            saturate = value_in;
-        end
-    endfunction
+    assign s_out = a_in + b_in;
 
 endmodule
 
