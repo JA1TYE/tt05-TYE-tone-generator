@@ -123,11 +123,11 @@ module wave_lut(
     assign data_out = wave_lookup(data_in,wave_type_in);
     function wave_lookup;
         input [2:0] data_in;
-        input [2:0] wave_type_in;
-        if(wave_type_in == 3'h0)begin//0000 1111
+        input [2:0] type_in;
+        if(type_in == 3'h0)begin//0000 1111
             wave_lookup = data_in[2];
         end
-        else if(wave_type_in == 3'h1)begin//0000 0001
+        else if(type_in == 3'h1)begin//0000 0001
             if(data_in == 3'h7)begin
                 wave_lookup = 1'b1;
             end
@@ -135,7 +135,7 @@ module wave_lut(
                 wave_lookup = 1'b0;
             end
         end
-        else if(wave_type_in == 3'h2)begin//0000 0011
+        else if(type_in == 3'h2)begin//0000 0011
             if(data_in == 3'h7 || data_in == 3'h6)begin
                 wave_lookup = 1'b1;
             end
@@ -143,7 +143,7 @@ module wave_lut(
                 wave_lookup = 1'b0;
             end
         end
-        else if(wave_type_in == 3'h3)begin//0000 0111
+        else if(type_in == 3'h3)begin//0000 0111
             if(data_in == 3'h7 || data_in == 3'h6 || data_in == 3'h5)begin
                 wave_lookup = 1'b1;
             end
@@ -151,7 +151,7 @@ module wave_lut(
                 wave_lookup = 1'b0;
             end
         end
-        else if(wave_type_in == 3'h4)begin//0001 1111
+        else if(type_in == 3'h4)begin//0001 1111
             if(data_in == 3'h0 || data_in == 3'h1 || data_in == 3'h2)begin
                 wave_lookup = 1'b0;
             end
@@ -159,7 +159,7 @@ module wave_lut(
                 wave_lookup = 1'b1;
             end
         end
-        else if(wave_type_in == 3'h5)begin//0011 1111
+        else if(type_in == 3'h5)begin//0011 1111
             if(data_in == 3'h0 || data_in == 3'h1)begin
                 wave_lookup = 1'b0;
             end
@@ -167,7 +167,7 @@ module wave_lut(
                 wave_lookup = 1'b1;
             end
         end
-        else if(wave_type_in == 3'h6)begin//0111 1111
+        else if(type_in == 3'h6)begin//0111 1111
             if(data_in == 3'h0)begin
                 wave_lookup = 1'b0;
             end
@@ -175,7 +175,7 @@ module wave_lut(
                 wave_lookup = 1'b1;
             end
         end
-        else if(wave_type_in == 3'h7)begin//0000 1101
+        else if(type_in == 3'h7)begin//0001 1001
             if(data_in == 3'h4 || data_in == 3'h5 || data_in == 3'h7)begin
                 wave_lookup = 1'b1;
             end
