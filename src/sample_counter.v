@@ -67,11 +67,11 @@ module sample_counter (
             if(master_count_in[9:2] == 8'h00)begin
                 phase_acc[master_count_in[1:0]] <= adder_out;
             end
-            else if(master_count_in[9:2] == 8'h01)begin
+            if(master_count_in[9:2] == 8'h01)begin
                 sqr_buf[master_count_in[1:0]] <= sqr_out;
             end
             //Mix each channels
-            else if(master_count_in[9:2] == 8'h02)begin
+            if(master_count_in[9:2] == 8'h02)begin
                 mix_result <= adder_out;
             end
             else begin
@@ -137,16 +137,13 @@ module wave_lut(
                 wave_lookup = 1'b0;
             end
         end
-        else if(type_in == 2'h3)begin//0000 0111
+        else begin//0000 0111
             if(addr_in == 3'h7 || addr_in == 3'h6 || addr_in == 3'h5)begin
                 wave_lookup = 1'b1;
             end
             else begin
                 wave_lookup = 1'b0;
             end
-        end
-        else begin
-            wave_lookup = addr_in[2];
         end
     endfunction
 
