@@ -49,6 +49,7 @@ module sample_counter (
             sat_flag <= 1'b0;
             mix_result <= 16'h0;
             
+            /*
             phase_acc[0] <= 16'h0;
             phase_acc[1] <= 16'h0;
             phase_acc[2] <= 16'h0;
@@ -61,7 +62,7 @@ module sample_counter (
             volume[1] <= 8'h0;
             volume[2] <= 8'h0;
             volume[3] <= 8'h0;
-
+            */
         end
         else begin
             //Update Phase accumulator
