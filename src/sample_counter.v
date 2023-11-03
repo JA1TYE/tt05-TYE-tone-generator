@@ -14,7 +14,7 @@ module sample_counter (
     reg [15:0] phase_acc[0:3];
     reg [15:0] phase_incr[0:3];
     reg [7:0]  volume[0:3];
-    reg [2:0]  wave_type[0:3];
+    reg [1:0]  wave_type[0:3];
     reg [15:0] mix_result;
     reg sqr_buf[0:3];
 
@@ -117,17 +117,17 @@ endmodule
 
 module wave_lut(
     input wire[2:0] data_in,
-    input wire[2:0] wave_type_in,
+    input wire[1:0] wave_type_in,
     output wire data_out
 );
     assign data_out = wave_lookup(data_in,wave_type_in);
     function wave_lookup;
         input [2:0] addr_in;
-        input [2:0] type_in;
-        if(type_in == 3'h0)begin//0000 1111
+        input [1:0] type_in;
+        if(type_in == 2'h0)begin//0000 1111
             wave_lookup = addr_in[2];
         end
-        else if(type_in == 3'h1)begin//0000 0001
+        else if(type_in == 2'h1)begin//0000 0001
             if(addr_in == 3'h7)begin
                 wave_lookup = 1'b1;
             end
@@ -135,7 +135,7 @@ module wave_lut(
                 wave_lookup = 1'b0;
             end
         end
-        else if(type_in == 3'h2)begin//0000 0011
+        else if(type_in == 2'h2)begin//0000 0011
             if(addr_in == 3'h7 || addr_in == 3'h6)begin
                 wave_lookup = 1'b1;
             end
@@ -143,40 +143,8 @@ module wave_lut(
                 wave_lookup = 1'b0;
             end
         end
-        else if(type_in == 3'h3)begin//0000 0111
+        else if(type_in == 2'h3)begin//0000 0111
             if(addr_in == 3'h7 || addr_in == 3'h6 || addr_in == 3'h5)begin
-                wave_lookup = 1'b1;
-            end
-            else begin
-                wave_lookup = 1'b0;
-            end
-        end
-        else if(type_in == 3'h4)begin//0001 1111
-            if(addr_in == 3'h0 || addr_in == 3'h1 || addr_in == 3'h2)begin
-                wave_lookup = 1'b0;
-            end
-            else begin
-                wave_lookup = 1'b1;
-            end
-        end
-        else if(type_in == 3'h5)begin//0011 1111
-            if(addr_in == 3'h0 || addr_in == 3'h1)begin
-                wave_lookup = 1'b0;
-            end
-            else begin
-                wave_lookup = 1'b1;
-            end
-        end
-        else if(type_in == 3'h6)begin//0111 1111
-            if(addr_in == 3'h0)begin
-                wave_lookup = 1'b0;
-            end
-            else begin
-                wave_lookup = 1'b1;
-            end
-        end
-        else if(type_in == 3'h7)begin//0001 1001
-            if(addr_in == 3'h4 || addr_in == 3'h5 || addr_in == 3'h7)begin
                 wave_lookup = 1'b1;
             end
             else begin
