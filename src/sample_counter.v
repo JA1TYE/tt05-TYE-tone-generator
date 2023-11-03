@@ -14,7 +14,7 @@ module sample_counter (
     reg [15:0] phase_acc[0:3];
     reg [15:0] phase_incr[0:3];
     reg [7:0]  volume[0:3];
-    reg [1:0]  wave_type[0:3];
+    reg [1:0]  wave_type;
     reg [15:0] mix_result;
     reg sqr_buf[0:3];
 
@@ -24,7 +24,7 @@ module sample_counter (
     assign incr_out = phase_incr[master_count_in[1:0]];
 
     wire sqr_out;
-    wave_lut WAVE_LUT(.data_in(acc_out[15:13]),.wave_type_in(wave_type[master_count_in[1:0]]),.data_out(sqr_out));
+    wave_lut WAVE_LUT(.data_in(acc_out[15:13]),.wave_type_in(wave_type),.data_out(sqr_out));
     
     wire [15:0] dca_out;
     assign dca_out = dca(sqr_buf[master_count_in[1:0]],volume[master_count_in[1:0]]);
@@ -98,7 +98,7 @@ module sample_counter (
                     volume[addr_in[1:0]] <= data_in[7:0];
                 end
                 else if(addr_in[3:2] == 2'h2)begin
-                    wave_type[addr_in[1:0]] <= data_in[2:0];
+                    wave_type <= data_in[2:0];
                 end
             end
         end
