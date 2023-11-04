@@ -141,16 +141,28 @@ module sample_counter (
             dca = (value_in[0] == 1'b1)?{3'h0,volume_in,volume_in[7:3]}:(~{3'h0,volume_in,volume_in[7:3]});
         end
         else begin
-            if(volume_in[7:6] == 2'h0)begin
+            if(volume_in[7:5] == 3'h0)begin
                 dca = 16'h0000;
             end
-            else if(volume_in[7:6] == 2'h1)begin
+            else if(volume_in[7:5] == 3'h1)begin
+                dca = {{8{value_in[15]}},value_in[15:8]};
+            end
+            else if(volume_in[7:5] == 3'h2)begin
+                dca = {{7{value_in[15]}},value_in[15:7]};
+            end
+            else if(volume_in[7:5] == 3'h3)begin
                 dca = {{6{value_in[15]}},value_in[15:6]};
             end
-            else if(volume_in[7:6] == 2'h2)begin
+            else if(volume_in[7:5] == 3'h4)begin
+                dca = {{5{value_in[15]}},value_in[15:5]};
+            end
+            else if(volume_in[7:5] == 3'h5)begin
                 dca = {{4{value_in[15]}},value_in[15:4]};
             end
-            else if(volume_in[7:6] == 2'h3)begin
+            else if(volume_in[7:5] == 3'h6)begin
+                dca = {{3{value_in[15]}},value_in[15:3]};
+            end
+            else if(volume_in[7:5] == 3'h7)begin
                 dca = {{2{value_in[15]}},value_in[15:2]};
             end
         end
