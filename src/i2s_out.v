@@ -4,18 +4,17 @@ module i2s_out
     input   wire reset_in,
     input   wire clk_in,
     input   wire [9:0]master_count_in,
-    input   wire [15:0] left_in,
-    input   wire [15:0] right_in,
+    input   wire [15:0] data_in,
     input   wire data_valid_in,
     output  wire d_out,
     output  wire ws_out,
     output  wire bclk_out   
 );
-    reg[31:0]                   buffer_reg;
+    reg[15:0]                   buffer_reg;
     reg                         buffer_valid;
-    reg[31:0]                   shift_reg;
+    reg[15:0]                   shift_reg;
 
-    assign d_out = shift_reg[31];
+    assign d_out = shift_reg[15];
     assign bclk_out = master_count_in[4];//32fs
     assign ws_out = master_count_in[9];//1024fs
 
@@ -27,33 +26,28 @@ module i2s_out
 
     always@(posedge clk_in)begin
         if(reset_in == 1'b1)begin
-            buffer_reg <= 32'h0;
+            buffer_reg <= 16'h0;
             buffer_valid <= 1'b0;
-            shift_reg <= 32'h0;
+            shift_reg <= 16'h0;
         end
         else begin
             if(bclk_counter == 5'h1f)begin
-                if(ws_counter == 5'h1f)begin
-                    shift_reg <= {shift_reg[30:0],1'b0};
-                end
-                else begin
-                    if(ws_counter == 0)begin
-                        if(buffer_valid == 1'b1)begin
-                            shift_reg <= buffer_reg;
-                            buffer_valid <= 1'b0;
-                        end
-                        else begin
-                            shift_reg <= 32'h0;
-                        end
+                if(ws_counter == 0)begin
+                    if(buffer_valid == 1'b1)begin
+                        shift_reg <= buffer_reg;
+                        buffer_valid <= 1'b0;
                     end
                     else begin
-                        shift_reg <= {shift_reg[30:0],1'b0};
+                        shift_reg <= 16'h0;
                     end
+                end
+                else begin
+                    shift_reg <= {shift_reg[14:0],shift_reg[15]};
                 end
             end    
 
             if(data_valid_in == 1'b1)begin
-                buffer_reg <= {left_in,right_in};
+                buffer_reg <= data_in;
                 buffer_valid <= 1'b1;
             end
         end

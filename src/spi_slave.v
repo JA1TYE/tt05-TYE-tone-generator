@@ -35,7 +35,7 @@ module spi_slave(
         end
     end
 
-    reg[7:0]    rx_shift_reg;
+    reg[6:0]    rx_shift_reg;
     reg[7:0]    rx_buf_reg;
     reg[2:0]    rx_count;
 
@@ -44,7 +44,7 @@ module spi_slave(
     always@(posedge clk_in)begin
         if(reset_in == 1'b1)begin
             rx_shift_reg <= 8'h0;
-            rx_buf_reg <= 8'h0;
+            rx_buf_reg <= 7'h0;
             rx_count <= 3'h0;
             data_valid_out <= 1'b0;
         end

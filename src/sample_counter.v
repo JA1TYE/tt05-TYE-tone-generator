@@ -4,7 +4,7 @@ module sample_counter (
     input wire clk_in,
     input wire [9:0]master_count_in,
     input wire [15:0]data_in,
-    input wire [3:0]addr_in,
+    input wire [5:0]addr_in,
     input wire data_valid_in,
     output wire [15:0]data_out,
     output reg data_valid_out
@@ -14,42 +14,71 @@ module sample_counter (
     reg [15:0] phase_acc[0:3];
     reg [15:0] phase_incr[0:3];
     reg [7:0]  volume[0:3];
-    reg [1:0]  wave_type;
+    reg [2:0]  wave_type[0:3];
     reg [15:0] mix_result;
-    reg sqr_buf[0:3];
+    reg [15:0] tmp_buf;
+
+    wire [5:0] master_id;
+    wire [1:0] slot_id;
+    wire [1:0] process_id;
+    assign master_id = master_count_in[9:4];
+    assign slot_id = master_count_in[3:2];
+    assign process_id = master_count_in[1:0];
 
     assign data_out = mix_result;
 
+    /*
+    a_in timetable
+    process_id:net
+    00:incr_out
+    01:dca_out
+    10:incr_out
+    11:dca_out
+    */
     wire [15:0] incr_out;
-    assign incr_out = phase_incr[master_count_in[1:0]];
+    assign incr_out = phase_incr[slot_id];
 
-    wire sqr_out;
-    wave_lut WAVE_LUT(.data_in(acc_out[15:13]),.wave_type_in(wave_type),.data_out(sqr_out));
-    
-    wire [15:0] dca_out;
-    assign dca_out = dca(sqr_buf[master_count_in[1:0]],volume[master_count_in[1:0]]);
+    //wire [15:0] dca_out;
+    //assign dca_out = dca(sqr_buf[master_count_in[1:0]],volume[slot_id]);
 
     wire [15:0] a_in;
-    assign a_in = (master_count_in[3:2] == 2'b00)?incr_out:{ {2{dca_out[15]}},dca_out[15:2]};
+    assign a_in = (process_id == 2'b00)?incr_out:wave_out;//{ {2{dca_out[15]}},dca_out[15:2]};
 
+    /*
+    b_in timetable
+    process_id:net
+    00:acc_out
+    01:mix_result
+    10:acc_out
+    11:mix_result
+    */
     wire [15:0] acc_out;
-    assign acc_out = phase_acc[master_count_in[1:0]];
+    assign acc_out = phase_acc[slot_id];
 
     wire [15:0] b_in;
-    assign b_in = (master_count_in[3:2] == 2'b00)?acc_out:mix_result;
+    assign b_in = (process_id == 2'b00)?acc_out:mix_result;
 
-    reg sat_flag;
+    wire [15:0] wave_out;
+    wave_lut WAVE_LUT(.clk_in(clk_in),
+            .lut_addr_in(acc_out[15:11]),.wave_type_in(wave_type[slot_id]),
+            .mem_write_addr_in(addr_in[4:0]),.mem_write_data_in(data_in[3:0]),.mem_write_en_in(data_valid_in & addr_in[5]),
+            .volume_in(volume[slot_id]),
+            .data_out(wave_out)
+            );
+    
+    wire sat_flag;
+    assign sat_flag = (process_id == 2'b01)?1'b1:1'b0;
+    
     wire [15:0]adder_out;
-
     sat_adder adder(.a_in(a_in),.b_in(b_in),.s_out(adder_out),.sat_en_in(sat_flag));
+
+
 
     always@(posedge clk_in)begin
         if(reset_in == 1'b1)begin
             data_valid_out <= 1'b0;
-            sat_flag <= 1'b0;
             mix_result <= 16'h0;
             
-            /*
             phase_acc[0] <= 16'h0;
             phase_acc[1] <= 16'h0;
             phase_acc[2] <= 16'h0;
@@ -62,29 +91,27 @@ module sample_counter (
             volume[1] <= 8'h0;
             volume[2] <= 8'h0;
             volume[3] <= 8'h0;
-            */
+
         end
         else begin
-            //Update Phase accumulator
-            if(master_count_in[9:2] == 8'h00)begin
-                phase_acc[master_count_in[1:0]] <= adder_out;
+            //Update Phase Accumulator
+            if(master_id == 6'h00)begin
+                if(process_id == 2'b00)begin
+                    phase_acc[slot_id] <= adder_out;
+                end
+                //Wave lookup
+                if(process_id == 2'b01)begin
+                    mix_result <= adder_out;
+                end
             end
-            if(master_count_in[9:2] == 8'h01)begin
-                sqr_buf[master_count_in[1:0]] <= sqr_out;
-            end
-            //Mix each channels
-            if(master_count_in[9:2] == 8'h02)begin
-                mix_result <= adder_out;
-            end
-
-            //initialize mix_result and set sat_flag
-            if(master_count_in == 10'h3)begin
-                sat_flag <= 1'b1;
+            if(master_id == 6'h01)begin
                 mix_result <= 16'h0;
             end
 
-            if(master_count_in == 10'hb)begin
-                sat_flag<= 1'b0;
+            //master_id == 6'h0
+            //slot_id == 2'h3
+            //process_id == 2'h3
+            if(master_count_in == 10'hf)begin
                 data_valid_out <= 1'b1;
             end
             else begin
@@ -92,14 +119,14 @@ module sample_counter (
             end
 
             if(data_valid_in == 1'b1)begin
-                if(addr_in[3:2] == 2'h0)begin
+                if(addr_in[5:2] == 4'h0)begin
                     phase_incr[addr_in[1:0]] <= data_in[15:0];
                 end
-                else if(addr_in[3:2] == 2'h1)begin
+                else if(addr_in[5:2] == 4'h1)begin
                     volume[addr_in[1:0]] <= data_in[7:0];
                 end
-                else if(addr_in[3:2] == 2'h2)begin
-                    wave_type <= data_in[1:0];
+                else if(addr_in[5:2] == 4'h2)begin
+                    wave_type[addr_in[1:0]] <= data_in[2:0];
                 end
             end
         end
@@ -111,49 +138,6 @@ module sample_counter (
 
         dca = (value_in == 1'b1)?{1'b0,volume_in,volume_in[7:1]}:(~{1'b0,volume_in,volume_in[7:1]});
         
-    endfunction
-
-endmodule
-
-module wave_lut(
-    input wire[2:0] data_in,
-    input wire[1:0] wave_type_in,
-    output wire data_out
-);
-    assign data_out = wave_lookup(data_in,wave_type_in);
-    function wave_lookup;
-        input [2:0] addr_in;
-        input [1:0] type_in;
-        if(type_in == 2'h0)begin//0000 1111
-            wave_lookup = addr_in[2];
-        end
-        else if(type_in == 2'h1)begin//0000 0001
-            if(addr_in == 3'h7)begin
-                wave_lookup = 1'b1;
-            end
-            else begin
-                wave_lookup = 1'b0;
-            end
-        end
-        else if(type_in == 2'h2)begin//0000 0011
-            if(addr_in == 3'h7 || addr_in == 3'h6)begin
-                wave_lookup = 1'b1;
-            end
-            else begin
-                wave_lookup = 1'b0;
-            end
-        end
-        else if(type_in == 2'h3)begin//0000 0111
-            if(addr_in == 3'h7 || addr_in == 3'h6 || addr_in == 3'h5)begin
-                wave_lookup = 1'b1;
-            end
-            else begin
-                wave_lookup = 1'b0;
-            end
-        end
-        else begin
-            wave_lookup = addr_in[2];
-        end
     endfunction
 
 endmodule
@@ -196,4 +180,3 @@ module sat_adder(
     endfunction
 
 endmodule
-

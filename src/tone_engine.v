@@ -28,7 +28,7 @@ module tone_engine
 
     //spi_decoder
     wire [15:0] decoder_data_out;
-    wire [3:0] decoder_addr_out;
+    wire [5:0] decoder_addr_out;
     wire decoder_data_valid_out;
     spi_decoder SPI_DEC(
             .reset_in(reset_in),.clk_in(clk_in),
@@ -52,7 +52,7 @@ module tone_engine
     i2s_out I2S_TX(
             .reset_in(reset_in),.clk_in(clk_in),
             .master_count_in(master_count),
-            .left_in(sound_data),.right_in(sound_data),
+            .data_in(sound_data),
             .data_valid_in(sample_data_valid_out),
             .d_out(i2s_d_out),.ws_out(i2s_ws_out),.bclk_out(i2s_bclk_out)
     );

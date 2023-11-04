@@ -5,7 +5,7 @@ module spi_decoder(
     input   wire       data_valid_in,
     input   wire       transaction_valid_in,
     output  reg[15:0]  data_out,
-    output  reg[3:0]   addr_out,
+    output  reg[5:0]   addr_out,
     output  reg       data_valid_out
 );
 
@@ -24,7 +24,7 @@ module spi_decoder(
             if(data_valid_in == 1'b1)begin
                 rx_counter <= (rx_counter == 2'h2)?2'h0:rx_counter + 2'h1;
                 if(rx_counter == 2'h0)begin
-                    addr_out <= data_in[3:0];
+                    addr_out <= data_in[5:0];
                 end
                 else if(rx_counter == 2'h1)begin
                     data_out <= {data_in,8'h0};
