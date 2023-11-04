@@ -33,13 +33,7 @@ module i2s_out
         else begin
             if(bclk_counter == 5'h1f)begin
                 if(ws_counter == 0)begin
-                    if(buffer_valid == 1'b1)begin
-                        shift_reg <= buffer_reg;
-                        buffer_valid <= 1'b0;
-                    end
-                    else begin
-                        shift_reg <= 16'h0;
-                    end
+                    shift_reg <= buffer_reg;
                 end
                 else begin
                     shift_reg <= {shift_reg[14:0],shift_reg[15]};
@@ -48,7 +42,6 @@ module i2s_out
 
             if(data_valid_in == 1'b1)begin
                 buffer_reg <= data_in;
-                buffer_valid <= 1'b1;
             end
         end
     end
