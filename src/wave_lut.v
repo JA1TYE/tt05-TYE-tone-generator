@@ -70,7 +70,7 @@ module wave_lut(
             end
         end
         else if(type_in == 2'h3)begin//Noise
-            sqr_wave_lookup = lfsr[0];
+            sqr_wave_lookup = {15'h0000,lfsr[0]};
         end
     endfunction
     

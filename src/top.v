@@ -14,7 +14,7 @@ module tt_um_ja1tye_sound_generator (
     wire reset;
     assign reset = ~rst_n;
 
-    // use bidirectionals as inputs
+    //Bidir pins aren't used
     assign uio_oe = 8'b00000000;
     assign uio_out[7:0] = 8'h0;
     assign uo_out[7:3] = 5'h0;
@@ -30,9 +30,10 @@ module tt_um_ja1tye_sound_generator (
     assign uo_out[1] = i2s_ws_out;
     assign uo_out[2] = i2s_d_out;
     
-    assign spi_cs_in = uio_in[0];
-    assign spi_mosi_in = uio_in[1];
-    assign spi_sclk_in = uio_in[2];
+    assign spi_cs_in = ui_in[0];//RP2040 SPI1 CS
+    assign spi_sclk_in = ui_in[1];//RP2040 SPI1 SCLK
+    assign spi_mosi_in = ui_in[2];//RP2040 SPI1 TX
+
 
     //Instantiate tone engine
     tone_engine tg(
