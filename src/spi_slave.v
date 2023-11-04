@@ -43,8 +43,8 @@ module spi_slave(
 
     always@(posedge clk_in)begin
         if(reset_in == 1'b1)begin
-            rx_shift_reg <= 8'h0;
-            rx_buf_reg <= 7'h0;
+            rx_shift_reg <= 7'h0;
+            rx_buf_reg <= 8'h0;
             rx_count <= 3'h0;
             data_valid_out <= 1'b0;
         end
@@ -57,7 +57,7 @@ module spi_slave(
             end
             else begin
                 if(sclk_edge == 1'b0 && async_sclk[1] == 1'b1)begin
-                    rx_shift_reg <= {rx_shift_reg[6:0],async_mosi[1]};
+                    rx_shift_reg <= {rx_shift_reg[5:0],async_mosi[1]};
                     rx_count <= rx_count + 1;
                     if(rx_count == 7)begin
                         rx_buf_reg <= {rx_shift_reg[6:0],async_mosi[1]};

@@ -6,7 +6,6 @@ module wave_lut(
     input wire[3:0] mem_write_addr_in,
     input wire[3:0] mem_write_data_in,
     input wire mem_write_en_in,
-    input wire[7:0] volume_in,
     output wire[15:0] data_out
 );
     wire [15:0] mem_out;
