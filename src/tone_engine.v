@@ -28,7 +28,7 @@ module tone_engine
 
     //spi_decoder
     wire [15:0] decoder_data_out;
-    wire [4:0] decoder_addr_out;
+    wire [5:0] decoder_addr_out;
     wire decoder_data_valid_out;
     spi_decoder SPI_DEC(
             .reset_in(reset_in),.clk_in(clk_in),

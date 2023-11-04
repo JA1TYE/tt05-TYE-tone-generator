@@ -4,7 +4,7 @@ module sample_counter (
     input wire clk_in,
     input wire [9:0]master_count_in,
     input wire [15:0]data_in,
-    input wire [4:0]addr_in,
+    input wire [5:0]addr_in,
     input wire data_valid_in,
     output wire [15:0]data_out,
     output reg data_valid_out
@@ -57,8 +57,8 @@ module sample_counter (
     wire [2:0] wave_type_out;
     assign wave_type_out = wave_type[slot_id];
     wave_lut WAVE_LUT(.clk_in(clk_in),
-            .lut_addr_in(acc_out[15:12]),.wave_type_in(wave_type_out),
-            .mem_write_addr_in(addr_in[3:0]),.mem_write_data_in(data_in[3:0]),.mem_write_en_in(data_valid_in & addr_in[4]),
+            .lut_addr_in(acc_out[15:11]),.wave_type_in(wave_type_out),
+            .mem_write_addr_in(addr_in[4:0]),.mem_write_data_in(data_in[3:0]),.mem_write_en_in(data_valid_in & addr_in[5]),
             .data_out(wave_out)
             );
         
@@ -119,13 +119,13 @@ module sample_counter (
             end
 
             if(data_valid_in == 1'b1)begin
-                if(addr_in[4:2] == 3'h0)begin
+                if(addr_in[5:2] == 4'h0)begin
                     phase_incr[addr_in[1:0]] <= data_in[15:0];
                 end
-                else if(addr_in[4:2] == 3'h1)begin
+                else if(addr_in[5:2] == 4'h1)begin
                     volume[addr_in[1:0]] <= data_in[7:0];
                 end
-                else if(addr_in[4:2] == 3'h2)begin
+                else if(addr_in[5:2] == 4'h2)begin
                     wave_type[addr_in[1:0]] <= data_in[2:0];
                 end
             end
