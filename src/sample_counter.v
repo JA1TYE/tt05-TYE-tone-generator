@@ -138,7 +138,7 @@ module sample_counter (
         input   type_flag_in;
 
         if(type_flag_in == 1'b0)begin
-            dca = (value_in == 1'b1)?{3'h0,volume_in,volume_in[7:3]}:(~{3'h0,volume_in,volume_in[7:3]});
+            dca = (value_in[0] == 1'b1)?{3'h0,volume_in,volume_in[7:3]}:(~{3'h0,volume_in,volume_in[7:3]});
         end
         else begin
             if(volume_in[7:6] == 2'h0)begin

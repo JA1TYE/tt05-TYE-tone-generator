@@ -43,26 +43,26 @@ module wave_lut(
         end
         else if(type_in == 2'h1)begin//0000 0001
             if(addr_in[3:1] == 3'h7)begin
-                sqr_wave_lookup = 1'b1;
+                sqr_wave_lookup = 16'h1;
             end
             else begin
-                sqr_wave_lookup = 1'b0;
+                sqr_wave_lookup = 16'h0;
             end
         end
         else if(type_in == 2'h2)begin//0000 0011
             if(addr_in[3:1] == 3'h7 || addr_in[3:1] == 3'h6)begin
-                sqr_wave_lookup = 1'b1;
+                sqr_wave_lookup = 16'h1;
             end
             else begin
-                sqr_wave_lookup = 1'b0;
+                sqr_wave_lookup = 16'h0;
             end
         end
         else if(type_in == 2'h3)begin//0000 0111
             if(addr_in[3:1] == 3'h7 || addr_in[3:1] == 3'h6 || addr_in[3:1] == 3'h5)begin
-                sqr_wave_lookup = 1'b1;
+                sqr_wave_lookup = 16'h1;
             end
             else begin
-                sqr_wave_lookup = 1'b0;
+                sqr_wave_lookup = 16'h0;
             end
         end
     endfunction
