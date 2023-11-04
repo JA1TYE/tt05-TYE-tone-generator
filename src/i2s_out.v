@@ -26,9 +26,9 @@ module i2s_out
 
     always@(posedge clk_in)begin
         if(reset_in == 1'b1)begin
-            buffer_reg <= 32'h0;
+            buffer_reg <= 16'h0;
             buffer_valid <= 1'b0;
-            shift_reg <= 32'h0;
+            shift_reg <= 16'h0;
         end
         else begin
             if(bclk_counter == 5'h1f)begin

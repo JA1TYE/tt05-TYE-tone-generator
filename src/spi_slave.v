@@ -35,7 +35,7 @@ module spi_slave(
         end
     end
 
-    reg[7:0]    rx_shift_reg;
+    reg[6:0]    rx_shift_reg;
     reg[7:0]    rx_buf_reg;
     reg[2:0]    rx_count;
 
