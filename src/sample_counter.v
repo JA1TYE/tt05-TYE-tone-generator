@@ -102,22 +102,22 @@ module sample_counter (
                 //Mixing
                 if(process_id == 2'b11)begin
                     mix_result <= adder_out;
-                    if(slot_id == 2'b11)begin
-                        data_valid_out <= 1'b1;
-                    end
                 end
             end
-            /*
             if(master_id == 6'h01)begin
                 mix_result <= 16'h0;
             end
-            */
 
-            if(data_valid_out == 1'b1)begin
-                data_valid_out <= 1'b0;
-                mix_result <= 16'h0;
+            //master_id == 6'h0
+            //slot_id == 2'h3
+            //process_id == 2'h3
+            if(master_count_in == 10'hf)begin
+                data_valid_out <= 1'b1;
             end
-  
+            else begin
+                data_valid_out <= 1'b0;
+            end
+
             if(data_valid_in == 1'b1)begin
                 if(addr_in[5:2] == 4'h0)begin
                     phase_incr[addr_in[1:0]] <= data_in[15:0];

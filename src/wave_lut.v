@@ -21,6 +21,7 @@ module wave_lut(
     
     //LFSR for noise
     reg[15:0] lfsr;
+
     always@(posedge clk_in)begin
         if(reset_in == 1'b1)begin
             lfsr <= 16'hffff;
