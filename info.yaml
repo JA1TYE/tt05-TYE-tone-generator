@@ -47,14 +47,14 @@ documentation:
 
       You can control this sound generator by SPI interface.
       SPI mode is mode 0 (CPOL=0, CPHA=0), and transaction length is 24-bit.
-      first 8-bit is register address, and next 16-bit is data.
+      first 8-bit is register address, and next 16-bit is data. Data is MSB first.
       
       | Addr | Description | Width |
       | ---- | ---- | ---- |
       | 0x00-0x03 | Frequency[0]-[3] | 16bit |
-      | 0x04-0x07 | Volume[0]-[3] | 8bit |
-      | 0x08-0x0b | Waveform Select[0]-[3] | 3bit |
-      | 0x20-0x3f | WaveTable[0]-[31] | 4bit |
+      | 0x04-0x07 | Volume[0]-[3] | 8bit (lower 8bits are valid)|
+      | 0x08-0x0b | Waveform Select[0]-[3] | 3bit (lower 3bits are valid)|
+      | 0x20-0x3f | WaveTable[0]-[31] | 4bit (lower 4bits are valid)|
 
 # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
   how_to_test:  |
