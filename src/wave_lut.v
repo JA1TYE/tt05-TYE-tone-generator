@@ -17,7 +17,9 @@ module wave_lut(
                 );
 
 
-    assign data_out = (wave_type_in[2])?mem_out:sqr_wave_lookup(lut_addr_in[4:2],wave_type_in[1:0]);
+    assign data_out = (wave_type_in[2])?
+                        ((wave_type_in[1:0] == 2'h3)?{15'h0000,lfsr[0]}:mem_out)
+                        :sqr_wave_lookup(lut_addr_in[4:2],wave_type_in[1:0]);
     
     //LFSR for noise
     reg[15:0] lfsr;
@@ -36,13 +38,13 @@ module wave_lut(
         if(type_in == 2'h0)begin//Normal
             mem_addr_trans = addr_in;
         end
-        else if(type_in == 2'h1)begin//random
-            mem_addr_trans = lfsr[4:0];
-        end
-        else if(type_in == 2'h2)begin//First Half
+        else if(type_in == 2'h1)begin//First Half
             mem_addr_trans = {1'b0,addr_in[4:1]};
         end
-        else if(type_in == 2'h3)begin//Second half
+        else if(type_in == 2'h2)begin//Second Half
+            mem_addr_trans = {1'b1,addr_in[4:1]};
+        end
+        else if(type_in == 2'h3)begin//Reserved for Noise
             mem_addr_trans = {1'b1,addr_in[4:1]};
         end
     endfunction

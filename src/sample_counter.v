@@ -97,7 +97,7 @@ module sample_counter (
                 end
                 //Volume adjustment
                 if(process_id == 2'b10)begin
-                    tmp_buf <= dca(tmp_buf,volume[slot_id],wave_type_out[2]);
+                    tmp_buf <= dca(tmp_buf,volume[slot_id],(wave_type_out[2] & (wave_type_out[1:0] != 2'h3)));
                 end
                 //Mixing
                 if(process_id == 2'b11)begin
