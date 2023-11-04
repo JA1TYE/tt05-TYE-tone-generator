@@ -56,7 +56,7 @@ module sample_counter (
     wire [15:0] wave_out;
     wire [2:0] wave_type_out;
     assign wave_type_out = wave_type[slot_id];
-    wave_lut WAVE_LUT(.clk_in(clk_in),
+    wave_lut WAVE_LUT(.clk_in(clk_in),.reset_in(reset_in),
             .lut_addr_in(acc_out[15:11]),.wave_type_in(wave_type_out),
             .mem_write_addr_in(addr_in[4:0]),.mem_write_data_in(data_in[3:0]),.mem_write_en_in(data_valid_in & addr_in[5]),
             .data_out(wave_out)
