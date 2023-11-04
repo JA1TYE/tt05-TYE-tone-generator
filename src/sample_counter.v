@@ -104,7 +104,7 @@ module sample_counter (
                     mix_result <= adder_out;
                 end
             end
-            if(master_id == 6'h01)begin
+            if(master_id[5] == 1'b01)begin
                 mix_result <= 16'h0;
             end
 
