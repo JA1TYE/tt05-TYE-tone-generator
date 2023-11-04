@@ -39,7 +39,7 @@ module wave_lut(
         input [3:0] addr_in;
         input [1:0] type_in;
         if(type_in == 2'h0)begin//0000 1111
-            sqr_wave_lookup = addr_in[3];
+            sqr_wave_lookup = {15'h0000,addr_in[3]};
         end
         else if(type_in == 2'h1)begin//0000 0001
             if(addr_in[3:1] == 3'h7)begin
