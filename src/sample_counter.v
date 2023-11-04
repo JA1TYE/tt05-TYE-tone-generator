@@ -4,7 +4,7 @@ module sample_counter (
     input wire clk_in,
     input wire [9:0]master_count_in,
     input wire [15:0]data_in,
-    input wire [5:0]addr_in,
+    input wire [4:0]addr_in,
     input wire data_valid_in,
     output wire [15:0]data_out,
     output reg data_valid_out
@@ -31,18 +31,13 @@ module sample_counter (
     a_in timetable
     process_id:net
     00:incr_out
-    01:dca_out
-    10:incr_out
     11:dca_out
     */
     wire [15:0] incr_out;
     assign incr_out = phase_incr[slot_id];
 
-    //wire [15:0] dca_out;
-    //assign dca_out = dca(sqr_buf[master_count_in[1:0]],volume[slot_id]);
-
     wire [15:0] a_in;
-    assign a_in = (process_id == 2'b00)?incr_out:wave_out;//{ {2{dca_out[15]}},dca_out[15:2]};
+    assign a_in = (process_id[1] == 1'b0)?incr_out:tmp_buf;
 
     /*
     b_in timetable
@@ -56,18 +51,20 @@ module sample_counter (
     assign acc_out = phase_acc[slot_id];
 
     wire [15:0] b_in;
-    assign b_in = (process_id == 2'b00)?acc_out:mix_result;
+    assign b_in = (process_id[1] == 1'b0)?acc_out:mix_result;
 
     wire [15:0] wave_out;
+    wire [2:0] wave_type_out;
+    assign wave_type_out = wave_type[slot_id];
     wave_lut WAVE_LUT(.clk_in(clk_in),
-            .lut_addr_in(acc_out[15:11]),.wave_type_in(wave_type[slot_id]),
-            .mem_write_addr_in(addr_in[4:0]),.mem_write_data_in(data_in[3:0]),.mem_write_en_in(data_valid_in & addr_in[5]),
+            .lut_addr_in(acc_out[15:12]),.wave_type_in(wave_type_out),
+            .mem_write_addr_in(addr_in[3:0]),.mem_write_data_in(data_in[3:0]),.mem_write_en_in(data_valid_in & addr_in[4]),
             .volume_in(volume[slot_id]),
             .data_out(wave_out)
             );
     
     wire sat_flag;
-    assign sat_flag = (process_id == 2'b01)?1'b1:1'b0;
+    assign sat_flag = (process_id[1] == 1'b1)?1'b1:1'b0;
     
     wire [15:0]adder_out;
     sat_adder adder(.a_in(a_in),.b_in(b_in),.s_out(adder_out),.sat_en_in(sat_flag));
@@ -101,6 +98,14 @@ module sample_counter (
                 end
                 //Wave lookup
                 if(process_id == 2'b01)begin
+                    tmp_buf <= wave_out;
+                end
+                //Volume adjustment
+                if(process_id == 2'b10)begin
+                    tmp_buf <= dca(tmp_buf,volume[slot_id],wave_type_out[2]);
+                end
+                //Mixing
+                if(process_id == 2'b11)begin
                     mix_result <= adder_out;
                 end
             end
@@ -119,13 +124,13 @@ module sample_counter (
             end
 
             if(data_valid_in == 1'b1)begin
-                if(addr_in[5:2] == 4'h0)begin
+                if(addr_in[4:2] == 3'h0)begin
                     phase_incr[addr_in[1:0]] <= data_in[15:0];
                 end
-                else if(addr_in[5:2] == 4'h1)begin
+                else if(addr_in[4:2] == 3'h1)begin
                     volume[addr_in[1:0]] <= data_in[7:0];
                 end
-                else if(addr_in[5:2] == 4'h2)begin
+                else if(addr_in[4:2] == 3'h2)begin
                     wave_type[addr_in[1:0]] <= data_in[2:0];
                 end
             end
@@ -133,10 +138,27 @@ module sample_counter (
     end
 
     function [15:0]dca;
-        input   value_in;
+        input   [15:0]value_in;
         input   [7:0] volume_in;
+        input   type_flag_in;
 
-        dca = (value_in == 1'b1)?{1'b0,volume_in,volume_in[7:1]}:(~{1'b0,volume_in,volume_in[7:1]});
+        if(type_flag_in == 1'b0)begin
+            dca = (value_in == 1'b1)?{3'h0,volume_in,volume_in[7:3]}:(~{3'h0,volume_in,volume_in[7:3]});
+        end
+        else begin
+            if(volume_in[7:6] == 2'h0)begin
+                dca = 16'h0000;
+            end
+            else if(volume_in[7:6] == 2'h1)begin
+                dca = {{6{value_in[15]}},value_in[15:6]};
+            end
+            else if(volume_in[7:6] == 2'h2)begin
+                dca = {{4{value_in[15]}},value_in[15:4]};
+            end
+            else if(volume_in[7:6] == 2'h3)begin
+                dca = {{2{value_in[15]}},value_in[15:2]};
+            end
+        end
         
     endfunction
 
