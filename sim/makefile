@@ -20,3 +20,8 @@ top.o:	top_sim.sv ../src/tone_engine.v ../src/i2s_out.v ../src/master_counter.v 
 			$(ICARUS) -g2012 -o top.o $^
 top:	top.o
 			$(VVP) top.o
+
+chip.o: chip_sim.sv ../src/top.v ../src/tone_engine.v ../src/i2s_out.v ../src/master_counter.v ../src/sample_counter.v ../src/spi_decoder.v ../src/spi_slave.v ../src/wave_lut.v
+			$(ICARUS) -g2012 -o chip.o $^
+chip: chip.o
+			$(VVP) chip.o
